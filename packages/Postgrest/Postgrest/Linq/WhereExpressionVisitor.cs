@@ -445,16 +445,16 @@ internal class WhereExpressionVisitor : ExpressionVisitor
 
     private class ParameterFinder : ExpressionVisitor
     {
-        private readonly ParameterExpression? _target;
+        private readonly ParameterExpression? target;
 
         public ParameterFinder(ParameterExpression? target) =>
-            this._target = target;
+            this.target = target;
 
         public bool Found { get; private set; }
 
         protected override Expression VisitParameter(ParameterExpression node)
         {
-            if (this._target == null || node == this._target)
+            if (this.target == null || node == this.target)
                 this.Found = true;
 
             return base.VisitParameter(node);
