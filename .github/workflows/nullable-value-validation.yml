@@ -1,0 +1,40 @@
+name: Nullable value validation
+
+on:
+  push:
+    branches: [ci/postgrest-nullable-value]
+
+permissions:
+  contents: read
+
+jobs:
+  baseline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: e04bc03e3d586e0d57875bdfc868c6bb8eb20a8a
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: Existing PostgREST tests
+        run: >-
+          dotnet test packages/Postgrest/Postgrest.Tests
+          --filter "TestCategory!=E2E"
+          --logger "console;verbosity=normal"
+
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: Nullable column regression
+        run: >-
+          dotnet test packages/Postgrest/Postgrest.Tests
+          --filter "FullyQualifiedName~Where_ShouldUseColumnName_GivenNullableValueComparison"
+          --logger "console;verbosity=normal"

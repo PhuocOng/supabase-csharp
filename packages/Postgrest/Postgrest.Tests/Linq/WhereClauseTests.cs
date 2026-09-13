@@ -172,6 +172,13 @@ public class WhereClauseTests
     }
 
     [TestMethod]
+    public void Where_ShouldUseColumnName_GivenNullableValueComparison()
+    {
+        this.client.Table<KitchenSink>().Where(x => x.IntValue!.Value > 3)
+            .GenerateUrl().Should().Be($"{BaseUrl}/kitchen_sink?int_value=gt.3");
+    }
+
+    [TestMethod]
     public void Where_ShouldThrowDescriptive_GivenTwoColumnsCompared()
     {
         var act = () => this.client.Table<KitchenSink>().Where(x => x.DateTimeValue < x.DateTimeValue1);
