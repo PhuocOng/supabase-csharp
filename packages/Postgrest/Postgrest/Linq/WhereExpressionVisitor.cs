@@ -120,13 +120,13 @@ internal class WhereExpressionVisitor : ExpressionVisitor
         Type? columnType = null;
         if (node.Left is MemberExpression leftMember)
         {
-            column = this.GetColumnFromMemberExpression(leftMember);
+            column = this.ResolveColumn(leftMember);
             columnType = leftMember.Type;
         } //To handle properly if it's a Convert ExpressionType generally with nullable properties
         else if (node.Left is UnaryExpression leftUnary && leftUnary.NodeType == ExpressionType.Convert &&
                  leftUnary.Operand is MemberExpression leftOperandMember)
         {
-            column = this.GetColumnFromMemberExpression(leftOperandMember);
+            column = this.ResolveColumn(leftOperandMember);
             columnType = leftOperandMember.Type;
         }
 
