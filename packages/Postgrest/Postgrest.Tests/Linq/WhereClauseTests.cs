@@ -179,6 +179,29 @@ public class WhereClauseTests
     }
 
     [TestMethod]
+    public void Where_ShouldUseColumnName_GivenConvertedNullableValueComparison()
+    {
+        this.client.Table<KitchenSink>().Where(x => (long) x.IntValue!.Value > 3L)
+            .GenerateUrl().Should().Be($"{BaseUrl}/kitchen_sink?int_value=gt.3");
+    }
+
+    [TestMethod]
+    public void Where_ShouldUsePrimaryKeyName_GivenNullableValueComparison()
+    {
+        var identifier = new Guid("f3ff356d-5803-43a7-b125-ba10cf10fdcd");
+        this.client.Table<KitchenSink>().Where(x => x.Id!.Value == identifier)
+            .GenerateUrl().Should().Be($"{BaseUrl}/kitchen_sink?id=eq.{identifier}");
+    }
+
+    [TestMethod]
+    public void Where_ShouldEvaluateCapturedNullableValue_GivenColumnComparison()
+    {
+        int? threshold = 3;
+        this.client.Table<KitchenSink>().Where(x => x.IntValue > threshold.Value)
+            .GenerateUrl().Should().Be($"{BaseUrl}/kitchen_sink?int_value=gt.3");
+    }
+
+    [TestMethod]
     public void Where_ShouldThrowDescriptive_GivenTwoColumnsCompared()
     {
         var act = () => this.client.Table<KitchenSink>().Where(x => x.DateTimeValue < x.DateTimeValue1);

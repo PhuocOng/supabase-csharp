@@ -36,5 +36,5 @@ jobs:
       - name: Nullable column regression
         run: >-
           dotnet test packages/Postgrest/Postgrest.Tests
-          --filter "FullyQualifiedName~Where_ShouldUseColumnName_GivenNullableValueComparison"
+          --filter "FullyQualifiedName~WhereClauseTests|FullyQualifiedName~TestConventions"
           --logger "console;verbosity=normal"
