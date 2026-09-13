@@ -20,15 +20,15 @@ jobs:
           global-json-file: global.json
       - name: Format the touched runtime file
         run: >-
-          dotnet format packages/Postgrest/Postgrest/Postgrest.csproj
-          --severity warn
+          dotnet format "$PWD/packages/Postgrest/Postgrest/Postgrest.csproj"
+          --severity warn --verbosity diagnostic
           --include packages/Postgrest/Postgrest/Linq/WhereExpressionVisitor.cs
       - name: Build after runtime formatting
         run: dotnet build packages/Postgrest/Postgrest/Postgrest.csproj -c Release
       - name: Format the touched test files
         run: >-
-          dotnet format packages/Postgrest/Postgrest.Tests/Postgrest.Tests.csproj
-          --severity warn
+          dotnet format "$PWD/packages/Postgrest/Postgrest.Tests/Postgrest.Tests.csproj"
+          --severity warn --verbosity diagnostic
           --include packages/Postgrest/Postgrest.Tests/Linq/WhereClauseTests.cs
           packages/Postgrest/Postgrest.Tests/Linq/LinqQueryTests.cs
       - name: Test after formatting
@@ -36,6 +36,10 @@ jobs:
           dotnet test packages/Postgrest/Postgrest.Tests
           --filter "TestCategory!=E2E"
           --logger "console;verbosity=normal"
+      - name: Verify the exact gate formatter commands
+        run: |
+          dotnet format "$PWD/packages/Postgrest/Postgrest/Postgrest.csproj" --verify-no-changes --severity warn --include packages/Postgrest/Postgrest/Linq/WhereExpressionVisitor.cs
+          dotnet format "$PWD/packages/Postgrest/Postgrest.Tests/Postgrest.Tests.csproj" --verify-no-changes --severity warn --include packages/Postgrest/Postgrest.Tests/Linq/WhereClauseTests.cs packages/Postgrest/Postgrest.Tests/Linq/LinqQueryTests.cs
       - name: Capture the formatter diff
         if: always()
         run: git diff -- packages/Postgrest > "$RUNNER_TEMP/postgrest-format.patch"
