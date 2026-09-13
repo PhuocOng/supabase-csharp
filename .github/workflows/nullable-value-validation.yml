@@ -1,57 +1,48 @@
-name: Nullable value validation
+name: PostgREST format diagnosis
 
 on:
   push:
-    branches: [ci/postgrest-nullable-value]
+    branches: [ci/postgrest-format]
 
 permissions:
   contents: read
 
 jobs:
-  quality-gate:
+  format:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-      - uses: actions/setup-dotnet@v4
-        with:
-          global-json-file: global.json
-      - uses: supabase/setup-cli@v1
-        with:
-          version: 2.114.0
-      - name: Start disposable Supabase stack
-        run: supabase start > "$RUNNER_TEMP/supabase-start.log" 2>&1
-      - name: Full repository quality gate
-        run: bash scripts/quality-gate/gate.sh packages
-      - name: Preserve quality gate reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: quality-gate-reports
-          path: '**/.gate/report.json'
-          include-hidden-files: true
-          if-no-files-found: warn
-      - name: Stop disposable Supabase stack
-        if: always()
-        run: supabase stop --no-backup
-
-  windows-postgrest:
-    runs-on: windows-latest
     timeout-minutes: 15
     steps:
-      - name: Preserve repository line endings
-        run: git config --global core.autocrlf false
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
       - uses: actions/setup-dotnet@v4
         with:
           global-json-file: global.json
-      - name: PostgREST unit and contract tests
+      - name: Format the touched runtime file
+        run: >-
+          dotnet format packages/Postgrest/Postgrest/Postgrest.csproj
+          --severity warn
+          --include packages/Postgrest/Postgrest/Linq/WhereExpressionVisitor.cs
+      - name: Build after runtime formatting
+        run: dotnet build packages/Postgrest/Postgrest/Postgrest.csproj -c Release
+      - name: Format the touched test files
+        run: >-
+          dotnet format packages/Postgrest/Postgrest.Tests/Postgrest.Tests.csproj
+          --severity warn
+          --include packages/Postgrest/Postgrest.Tests/Linq/WhereClauseTests.cs
+          packages/Postgrest/Postgrest.Tests/Linq/LinqQueryTests.cs
+      - name: Test after formatting
         run: >-
           dotnet test packages/Postgrest/Postgrest.Tests
           --filter "TestCategory!=E2E"
           --logger "console;verbosity=normal"
+      - name: Capture the formatter diff
+        if: always()
+        run: git diff -- packages/Postgrest > "$RUNNER_TEMP/postgrest-format.patch"
+      - name: Preserve the formatter diff
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: postgrest-format-diff
+          path: ${{ runner.temp }}/postgrest-format.patch
+          if-no-files-found: error
