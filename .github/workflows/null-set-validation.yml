@@ -35,8 +35,8 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           global-json-file: global.json
-      - name: Set validation with null reference regression
+      - name: Set and update contract regressions
         run: >-
           dotnet test packages/Postgrest/Postgrest.Tests
-          --filter "FullyQualifiedName~Postgrest.Tests.Linq.SetClauseTests"
+          --filter "FullyQualifiedName~Postgrest.Tests.Linq.SetClauseTests|FullyQualifiedName~Postgrest.Tests.Writing.UpdateApprovalTests"
           --logger "console;verbosity=normal"

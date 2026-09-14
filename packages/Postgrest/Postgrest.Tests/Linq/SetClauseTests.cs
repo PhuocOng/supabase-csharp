@@ -27,6 +27,13 @@ public class SetClauseTests
     }
 
     [TestMethod]
+    public void Set_ShouldAcceptNull_GivenAJsonObjectColumn()
+    {
+        var act = () => client.Table<UserWithJsonData>().Set(user => user.Data!, null);
+        act.Should().NotThrow();
+    }
+
+    [TestMethod]
     public void Set_ShouldAcceptNull_GivenAStringColumn()
     {
         var act = () => client.Table<KitchenSink>().Set(model => model.StringValue!, null);
