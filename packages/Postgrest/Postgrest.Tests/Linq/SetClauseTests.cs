@@ -22,63 +22,63 @@ public class SetClauseTests
     [TestMethod]
     public void Set_ShouldAcceptNull_GivenAReferenceTypeColumn()
     {
-        var act = () => client.Table<KitchenSink>().Set(model => model.ListOfStrings!, null);
+        var act = () => this.client.Table<KitchenSink>().Set(model => model.ListOfStrings!, null);
         act.Should().NotThrow();
     }
 
     [TestMethod]
     public void Set_ShouldAcceptNull_GivenAJsonObjectColumn()
     {
-        var act = () => client.Table<UserWithJsonData>().Set(user => user.Data!, null);
+        var act = () => this.client.Table<UserWithJsonData>().Set(user => user.Data!, null);
         act.Should().NotThrow();
     }
 
     [TestMethod]
     public void Set_ShouldAcceptNull_GivenAStringColumn()
     {
-        var act = () => client.Table<KitchenSink>().Set(model => model.StringValue!, null);
+        var act = () => this.client.Table<KitchenSink>().Set(model => model.StringValue!, null);
         act.Should().NotThrow();
     }
 
     [TestMethod]
     public void Set_ShouldAcceptNull_GivenANullableValueTypeColumn()
     {
-        var act = () => client.Table<KitchenSink>().Set(model => model.IntValue!, null);
+        var act = () => this.client.Table<KitchenSink>().Set(model => model.IntValue!, null);
         act.Should().NotThrow();
     }
 
     [TestMethod]
     public void Set_ShouldThrow_GivenNullForANonNullableValueTypeColumn()
     {
-        var act = () => client.Table<KitchenSink>().Set(model => model.BooleanValue, null);
+        var act = () => this.client.Table<KitchenSink>().Set(model => model.BooleanValue, null);
         act.Should().Throw<ArgumentException>();
     }
 
     [TestMethod]
     public void Set_ShouldThrow_GivenAValueOfTheWrongType()
     {
-        var act = () => client.Table<Movie>().Set(x => x.Name!, DateTime.Now);
+        var act = () => this.client.Table<Movie>().Set(x => x.Name!, DateTime.Now);
         act.Should().Throw<ArgumentException>();
     }
 
     [TestMethod]
     public void Set_ShouldThrow_GivenAKeyThatIsNotAColumn()
     {
-        var act = () => client.Table<Movie>().Set(x => DateTime.Now, "value");
+        var act = () => this.client.Table<Movie>().Set(x => DateTime.Now, "value");
         act.Should().Throw<ArgumentException>();
     }
 
     [TestMethod]
     public void Set_ShouldThrow_GivenAKeyValuePairWithAMismatchedValueType()
     {
-        var act = () => client.Table<Movie>().Set(x => new KeyValuePair<object, object?>(x.Name!, DateTime.Now));
+        var act = () => this.client.Table<Movie>().Set(x => new KeyValuePair<object, object?>(x.Name!, DateTime.Now));
         act.Should().Throw<ArgumentException>();
     }
 
     [TestMethod]
     public void Set_ShouldThrow_GivenAKeyValuePairWhoseKeyIsNotAColumn()
     {
-        var act = () => client.Table<Movie>().Set(x => new KeyValuePair<object, object?>(DateTime.Now, "value"));
+        var act = () => this.client.Table<Movie>().Set(x => new KeyValuePair<object, object?>(DateTime.Now, "value"));
         act.Should().Throw<ArgumentException>();
     }
 }
