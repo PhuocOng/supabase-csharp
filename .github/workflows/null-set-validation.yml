@@ -22,7 +22,7 @@ jobs:
         run: |
           format_status=0
           dotnet format "$PWD/packages/Postgrest/Postgrest/Postgrest.csproj" --verify-no-changes --severity warn --include packages/Postgrest/Postgrest/Table.cs || format_status=1
-          dotnet format "$PWD/packages/Postgrest/Postgrest.Tests/Postgrest.Tests.csproj" --verify-no-changes --severity warn --include packages/Postgrest/Postgrest.Tests/Linq/SetClauseTests.cs packages/Postgrest/Postgrest.Tests/Linq/LinqQueryTests.cs packages/Postgrest/Postgrest.Tests/Models/User.cs packages/Postgrest/Postgrest.Tests/Writing/UpdateApprovalTests.cs || format_status=1
+          dotnet format "$PWD/packages/Postgrest/Postgrest.Tests/Postgrest.Tests.csproj" --verify-no-changes --severity warn --include packages/Postgrest/Postgrest.Tests/Linq/SetClauseTests.cs packages/Postgrest/Postgrest.Tests/Linq/LinqQueryTests.cs packages/Postgrest/Postgrest.Tests/Models/UserWithJsonData.cs packages/Postgrest/Postgrest.Tests/Writing/UpdateApprovalTests.cs || format_status=1
           exit "$format_status"
 
   quality-gate:
