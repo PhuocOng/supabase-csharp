@@ -20,6 +20,13 @@ public class SetClauseTests
     private readonly Client client = new(BaseUrl);
 
     [TestMethod]
+    public void Set_ShouldAcceptNull_GivenAReferenceTypeColumn()
+    {
+        var act = () => client.Table<KitchenSink>().Set(model => model.ListOfStrings!, null);
+        act.Should().NotThrow();
+    }
+
+    [TestMethod]
     public void Set_ShouldThrow_GivenAValueOfTheWrongType()
     {
         var act = () => client.Table<Movie>().Set(x => x.Name!, DateTime.Now);

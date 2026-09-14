@@ -1,0 +1,42 @@
+name: Null set validation
+
+on:
+  push:
+    branches: [ci/postgrest-null-set]
+
+permissions:
+  contents: read
+
+jobs:
+  baseline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 296b165392cdaaa97159d918c96d97f7c954d531
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: Existing Set validation tests
+        run: >-
+          dotnet test packages/Postgrest/Postgrest.Tests
+          --filter "FullyQualifiedName~Postgrest.Tests.Linq.SetClauseTests"
+          --logger "console;verbosity=normal"
+
+  regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: Set validation with null reference regression
+        run: >-
+          dotnet test packages/Postgrest/Postgrest.Tests
+          --filter "FullyQualifiedName~Postgrest.Tests.Linq.SetClauseTests"
+          --logger "console;verbosity=normal"
