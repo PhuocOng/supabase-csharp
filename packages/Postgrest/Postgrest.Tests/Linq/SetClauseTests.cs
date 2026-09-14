@@ -27,6 +27,27 @@ public class SetClauseTests
     }
 
     [TestMethod]
+    public void Set_ShouldAcceptNull_GivenAStringColumn()
+    {
+        var act = () => client.Table<KitchenSink>().Set(model => model.StringValue!, null);
+        act.Should().NotThrow();
+    }
+
+    [TestMethod]
+    public void Set_ShouldAcceptNull_GivenANullableValueTypeColumn()
+    {
+        var act = () => client.Table<KitchenSink>().Set(model => model.IntValue!, null);
+        act.Should().NotThrow();
+    }
+
+    [TestMethod]
+    public void Set_ShouldThrow_GivenNullForANonNullableValueTypeColumn()
+    {
+        var act = () => client.Table<KitchenSink>().Set(model => model.BooleanValue, null);
+        act.Should().Throw<ArgumentException>();
+    }
+
+    [TestMethod]
     public void Set_ShouldThrow_GivenAValueOfTheWrongType()
     {
         var act = () => client.Table<Movie>().Set(x => x.Name!, DateTime.Now);
